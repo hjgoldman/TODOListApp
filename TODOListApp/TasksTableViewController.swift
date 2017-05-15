@@ -10,15 +10,48 @@ import UIKit
 
 class TasksTableViewController: UITableViewController, UITextFieldDelegate {
     
-    var tasks = [Task]()
+    var tasks :[Task]!
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.tasks = [Task]()
         
-        
+        populateTasks()
 
     }
-
+    
+    private func populateTasks() {
+    
+        let url = URL(string: "http://localhost:8080/tasks/all")!
+        
+        URLSession.shared.dataTask(with: url) { (data, response, error) in
+            
+            let json = try! JSONSerialization.jsonObject(with: data!, options: []) as! [[String:Any]]
+            
+            print(json)
+            
+            for item in json {
+                
+                let title = item["title"] as! String
+                let taskId = item["taskId"] as! Int
+                
+                let task = Task()
+                task.title = title
+                task.taskId = taskId
+                
+                self.tasks.append(task)
+                
+            }
+            
+            
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+            
+            
+            
+        }.resume()
+    }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
@@ -45,7 +78,8 @@ class TasksTableViewController: UITableViewController, UITextFieldDelegate {
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        let task = Task(title: textField.text!)
+        let task = Task()
+        task.title = textField.text!
         self.tasks.append(task)
         
         textField.text = ""

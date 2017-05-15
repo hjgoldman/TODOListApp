@@ -11,9 +11,7 @@ import Foundation
 
 class Task {
     
-    var title :String
+    var title :String!
+    var taskId :Int!
     
-    init(title :String) {
-        self.title = title
-    }
 }
