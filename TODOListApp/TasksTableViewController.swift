@@ -118,6 +118,29 @@ class TasksTableViewController: UITableViewController, UITextFieldDelegate {
 
         return cell
     }
+    
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        
+        if editingStyle == .delete {
+            let task = self.tasks[indexPath.row]
+            
+            let url = URL(string: "http://localhost:8080/tasks/delete")!
+            
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.httpBody = try! JSONSerialization.data(withJSONObject: ["taskId":task.taskId!], options: [])
+            
+            URLSession.shared.dataTask(with: request) { (data, _, _) in
+                
+                DispatchQueue.main.async {
+                    self.populateTasks()
+                }
+                }.resume()
+
+            
+        }
+    }
 
 
 
