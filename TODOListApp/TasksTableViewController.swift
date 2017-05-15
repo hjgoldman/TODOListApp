@@ -14,13 +14,14 @@ class TasksTableViewController: UITableViewController, UITextFieldDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.tasks = [Task]()
         
         populateTasks()
 
     }
     
     private func populateTasks() {
+        
+        self.tasks = [Task]()
     
         let url = URL(string: "http://localhost:8080/tasks/all")!
         
@@ -43,12 +44,10 @@ class TasksTableViewController: UITableViewController, UITextFieldDelegate {
                 
             }
             
-            
             DispatchQueue.main.async {
                 self.tableView.reloadData()
             }
-            
-            
+
             
         }.resume()
     }
@@ -80,11 +79,25 @@ class TasksTableViewController: UITableViewController, UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         let task = Task()
         task.title = textField.text!
-        self.tasks.append(task)
+        
+        let url = URL(string: "http://localhost:8080/tasks/create")!
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try! JSONSerialization.data(withJSONObject: ["title":textField.text!], options: [])
+        
+        URLSession.shared.dataTask(with: request) { (data, _, _) in
+            
+            DispatchQueue.main.async {
+                self.populateTasks()
+            }
+        }.resume()
+        
+//        self.tasks.append(task)
         
         textField.text = ""
         
-        self.tableView.reloadData()
         
         return textField.resignFirstResponder()
     }
