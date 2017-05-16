@@ -23,7 +23,7 @@ class TasksTableViewController: UITableViewController, UITextFieldDelegate {
         
         self.tasks = [Task]()
     
-        let url = URL(string: "http://localhost:8080/tasks/all")!
+        let url = URL(string: "http://localhost:8080/tasks/get")!
         
         URLSession.shared.dataTask(with: url) { (data, response, error) in
             
@@ -80,7 +80,7 @@ class TasksTableViewController: UITableViewController, UITextFieldDelegate {
         let task = Task()
         task.title = textField.text!
         
-        let url = URL(string: "http://localhost:8080/tasks/create")!
+        let url = URL(string: "http://localhost:8080/tasks/post")!
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
