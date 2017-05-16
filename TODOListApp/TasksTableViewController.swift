@@ -34,7 +34,7 @@ class TasksTableViewController: UITableViewController, UITextFieldDelegate {
             for item in json {
                 
                 let title = item["title"] as! String
-                let taskId = item["taskId"] as! Int
+                let taskId = item["id"] as! Int
                 
                 let task = Task()
                 task.title = title
@@ -129,7 +129,7 @@ class TasksTableViewController: UITableViewController, UITextFieldDelegate {
             var request = URLRequest(url: url)
             request.httpMethod = "POST"
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-            request.httpBody = try! JSONSerialization.data(withJSONObject: ["taskId":task.taskId!], options: [])
+            request.httpBody = try! JSONSerialization.data(withJSONObject: ["id":task.taskId!], options: [])
             
             URLSession.shared.dataTask(with: request) { (data, _, _) in
                 
